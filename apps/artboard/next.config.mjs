@@ -1,19 +1,25 @@
+// apps/artboard/next.config.mjs
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  transpilePackages: ["@myorg/ui"],
   async headers() {
+    const clientDomain = process.env.CLIENT_DOMAIN?.replace(/\/$/, ""); // trim trailing slash if any
+
     return [
       {
         source: "/:path*",
         headers: [
-          // IMPORTANT: allow the Client to embed Artboard in an iframe during dev
           {
             key: "Content-Security-Policy",
-            value: "frame-ancestors 'self' http://localhost:3000;",
+            value: `frame-ancestors ${clientDomain || "'self'"};`,
           },
+          // Clear or override any restrictive defaults
+          { key: "X-Frame-Options", value: "ALLOWALL" },
         ],
       },
     ];
   },
+  transpilePackages: ["@myorg/ui"],
 };
+
 export default nextConfig;
