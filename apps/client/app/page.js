@@ -8,15 +8,12 @@ export default function ClientHome() {
     const frame = document.querySelector('iframe[title="artboard"]');
     frame?.contentWindow?.postMessage(
       { type: "PING", data: "Hello from Client" },
-      "http://localhost:3001"
+      process.env.NEXT_PUBLIC_ARTBOARD_URL
     );
   }
 
   // During dev, Artboard runs on :3001; in prod, use an env var (NEXT_PUBLIC_ARTBOARD_URL)
-  const artboardUrl = useMemo(
-    () => process.env.NEXT_PUBLIC_ARTBOARD_URL ?? "http://localhost:3001",
-    []
-  );
+  const artboardUrl = useMemo(() => process.env.NEXT_PUBLIC_ARTBOARD_URL, []);
 
   return (
     <main style={{ padding: 24 }}>
@@ -44,9 +41,7 @@ export default function ClientHome() {
         <iframe
           title="artboard"
           src={artboardUrl}
-          style={{ width: "100%", height: 600, border: "0" }}
-          // optional: tighten security; adjust as needed for messaging
-          sandbox="allow-scripts allow-same-origin allow-forms"
+          style={{ width: "100%", height: 600, border: "0", zIndex: 1000 }}
         />
       </div>
     </main>
